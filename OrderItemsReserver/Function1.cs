@@ -40,7 +40,7 @@ namespace OrderItemsReserver
             var storageConfig = new
             {
                 ConnectionString =
-                    @"DefaultEndpointsProtocol=https;AccountName=anaralik1;AccountKey=NwMPkbUn68fxHdOfs6Ag6VGtWELvqXpiVJAe2baLjGGFZyUEfHTBQBLVMhJdBpYkJBrmG16NHehH+AStL2rktA==;EndpointSuffix=core.windows.net",
+                    @"",
                 FileContainerName = "reservation"
             };
 

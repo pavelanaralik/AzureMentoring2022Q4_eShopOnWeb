@@ -109,7 +109,7 @@ public class CheckoutModel : PageModel
     {
         var json = JsonConvert.SerializeObject(items);
 
-        var url = @"https://anaralik-order-items-reserver.azurewebsites.net/api/Function1?code=rEHIsgnIVIUldz4hXdJb9YysvI4aPC04qAKhG6vGlTVHAzFuFQzanQ==";
+        var url = @"";
 
         var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
