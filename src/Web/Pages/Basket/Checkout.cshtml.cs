@@ -1,4 +1,7 @@
-﻿using Ardalis.GuardClauses;
+﻿using System.Net;
+using System.Text;
+using Ardalis.GuardClauses;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +11,8 @@ using Microsoft.eShopWeb.ApplicationCore.Exceptions;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.Infrastructure.Identity;
 using Microsoft.eShopWeb.Web.Interfaces;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Microsoft.eShopWeb.Web.Pages.Basket;
 
@@ -20,6 +25,7 @@ public class CheckoutModel : PageModel
     private string? _username = null;
     private readonly IBasketViewModelService _basketViewModelService;
     private readonly IAppLogger<CheckoutModel> _logger;
+    static HttpClient _client = new HttpClient();
 
     public CheckoutModel(IBasketService basketService,
         IBasketViewModelService basketViewModelService,
@@ -51,6 +57,10 @@ public class CheckoutModel : PageModel
             {
                 return BadRequest();
             }
+
+            //Sends to blob
+            var result = await SendReservationAsync(items);
+            if (!result) return RedirectToPage("Error");
 
             var updateModel = items.ToDictionary(b => b.Id.ToString(), b => b.Quantity);
             await _basketService.SetQuantities(BasketModel.Id, updateModel);
@@ -93,5 +103,19 @@ public class CheckoutModel : PageModel
         var cookieOptions = new CookieOptions();
         cookieOptions.Expires = DateTime.Today.AddYears(10);
         Response.Cookies.Append(Constants.BASKET_COOKIENAME, _username, cookieOptions);
+    }
+
+    private static async Task<bool> SendReservationAsync(IEnumerable<BasketItemViewModel> items)
+    {
+        var json = JsonConvert.SerializeObject(items);
+
+        var url = @"https://anaralik-order-items-reserver.azurewebsites.net/api/Function1?code=rEHIsgnIVIUldz4hXdJb9YysvI4aPC04qAKhG6vGlTVHAzFuFQzanQ==";
+
+        var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+
+        var response = await _client.PostAsync(url, httpContent);
+
+        return response.IsSuccessStatusCode;
     }
 }
