@@ -39,6 +39,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<AppIdentityDbContext>()
         .AddDefaultTokenProviders();
 
+builder.Services.AddApplicationInsightsTelemetry();
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
 builder.Services.Configure<CatalogSettings>(builder.Configuration);
@@ -182,5 +184,6 @@ app.UseEndpoints(endpoints =>
 app.MapEndpoints();
 app.Logger.LogInformation("LAUNCHING PublicApi");
 app.Run();
+throw new Exception("Cannot move further");
 
 public partial class Program { }
